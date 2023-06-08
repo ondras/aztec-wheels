@@ -3,9 +3,6 @@
 	font-family: sans-serif;
 }
 
-body {
-}
-
 form {
 	margin: 1em 0;
 }
@@ -20,16 +17,10 @@ output:not(:empty) {
 	padding: 0.5em;
 }
 
+.none { --color: #000; --size: 1; }
 .small { --color: red; --size: 2; }
 .medium { --color: green; --size: 3; }
 .large { --color: #aa0; --size: 4; }
-
-span.wheel {
-	display: inline-block;
-	border: 1px solid black;
-	padding: 1px 4px;
-	margin: 0 2px;
-}
 
 form[id]:not(:target) { display: none; }
 
@@ -39,8 +30,15 @@ nav ul {
 	gap: 2em;
 }
 
-option, output span {
+option, output span.wheel {
 	background-color: var(--color, transparent);
+}
+
+output span.wheel {
+	display: inline-block;
+	border: 1px solid black;
+	padding: 1px 4px;
+	margin: 0 2px;
 }
 
 h1 {
@@ -69,4 +67,41 @@ h1 span:nth-child(even) {
 	to {
 		transform: rotate(calc(360deg * var(--direction)));
 	}
+}
+
+
+.wheels {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.wheels .controls {
+	width: 100%;
+	z-index: 1;
+}
+
+.wheels .controls button {
+	font-size: 200%;
+}
+
+.wheels .wheel {
+	position: relative;
+	color: var(--color);
+	font-size: calc(var(--size) * 110px);
+	transform: rotate(calc(var(--angle) * -1deg));
+	line-height: 0.8;
+	transition: all 100ms;
+}
+
+.wheels .wheel span {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	font-size: 16px;
+	color: #000;
+	text-transform: uppercase;
+	font-weight: bold;
+	--dist: calc(var(--size) * -30px);
+	transform: translate(-50%, -60%) rotate(calc(1deg * var(--angle))) translate(0, var(--dist));
 }

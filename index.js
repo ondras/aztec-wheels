@@ -101,6 +101,12 @@
   };
 
   // ts/index.ts
+  var countToSize = {
+    10: "none",
+    20: "small",
+    30: "medium",
+    40: "large"
+  };
   function byName(name, parent = document.body) {
     return parent.querySelector(`[name=${name}]`);
   }
@@ -144,7 +150,9 @@
     e.preventDefault();
     let form = e.target;
     let output = form.querySelector("output");
+    let wheels = form.querySelector(".wheels");
     output.innerHTML = "";
+    wheels.innerHTML = "";
     let word = byName("word", form).value;
     if (!word) {
       return alert("Zadej slovo");
@@ -162,6 +170,7 @@
       let result = checkWord(word, state, config2);
       if (result) {
         output.innerHTML = serializeMoves(result, state, config2);
+        initWheels(wheels, config2, state.value2);
       } else {
         output.innerHTML = "\u{1F595}";
       }
@@ -187,11 +196,6 @@
   }
   function serializeMoves(moves, initialState, config2) {
     let html = "";
-    const countToSize = {
-      20: "small",
-      30: "medium",
-      40: "large"
-    };
     html += `<span class="wheel ${countToSize[config2.size1]}">${config2.alphabet[initialState.value1]}</span>`;
     html += `<span class="wheel ${countToSize[config2.size2]}">${config2.alphabet[initialState.value2]}</span>`;
     html += `<br/><br/>`;
@@ -202,5 +206,50 @@
     let symbol = move.offset1 > 0 ? "\u2939" : "\u2938";
     let letter = config2.alphabet[move.state.value1];
     return `${symbol} ${letter}`;
+  }
+  function initWheels(parent, config2, value2) {
+    let wheel1 = buildWheel(config2.size1, config2.alphabet);
+    let wheel2 = buildWheel(10, "");
+    let wheel3 = buildWheel(config2.size2, config2.alphabet);
+    let controls = document.createElement("div");
+    controls.className = "controls";
+    let ccw = document.createElement("button");
+    ccw.type = "button";
+    ccw.textContent = "\u2939 (ccw)";
+    ccw.addEventListener("click", (e) => rotateBy(1));
+    let cw = document.createElement("button");
+    cw.type = "button";
+    cw.textContent = "\u2938 (cw)";
+    cw.addEventListener("click", (e) => rotateBy(-1));
+    let angle1 = 0;
+    let angle2 = 360 * value2 / config2.alphabet.length;
+    function update() {
+      wheel1.style.setProperty("--angle", String(angle1));
+      wheel3.style.setProperty("--angle", String(angle2));
+    }
+    update();
+    function rotateBy(diff) {
+      let step1 = 360 / config2.alphabet.length;
+      let step2 = step1 * config2.size1 / config2.size2;
+      angle1 += diff * step1;
+      angle2 += diff * step2;
+      update();
+    }
+    controls.append(ccw, cw);
+    parent.append(controls, wheel1, wheel2, wheel3);
+  }
+  function buildWheel(size, alphabet) {
+    let node = document.createElement("div");
+    node.classList.add("wheel", countToSize[size]);
+    node.innerHTML = "\u2638";
+    let letters = alphabet.split("").map((char, i, all) => {
+      let span = document.createElement("span");
+      let angle = i / all.length * 360;
+      span.style.setProperty("--angle", String(angle));
+      span.textContent = char;
+      return span;
+    });
+    node.append(...letters);
+    return node;
   }
 })();
