@@ -1,0 +1,72 @@
+* {
+	box-sizing: border-box;
+	font-family: sans-serif;
+}
+
+body {
+}
+
+form {
+	margin: 1em 0;
+}
+
+output {
+	display: block;
+	background-color: #eee;
+	text-transform: uppercase;
+}
+
+output:not(:empty) {
+	padding: 0.5em;
+}
+
+.small { --color: red; --size: 2; }
+.medium { --color: green; --size: 3; }
+.large { --color: #aa0; --size: 4; }
+
+span.wheel {
+	display: inline-block;
+	border: 1px solid black;
+	padding: 1px 4px;
+	margin: 0 2px;
+}
+
+form[id]:not(:target) { display: none; }
+
+nav ul {
+	list-style: none;
+	display: flex;
+	gap: 2em;
+}
+
+option, output span {
+	background-color: var(--color, transparent);
+}
+
+h1 {
+	display: flex;
+	align-items: center;
+}
+
+h1 span {
+	color: var(--color);
+	font-size: calc(var(--size) * 20px);
+
+	--duration: calc(2s * var(--size));
+	--direction: 1;
+
+	animation: rotate var(--duration) linear infinite;
+}
+
+h1 span:nth-child(even) {
+	--direction: -1;
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(calc(360deg * var(--direction)));
+	}
+}

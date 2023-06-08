@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="stylesheet" href="index.css" />
+	</head>
+	<body>
+		<h1>
+			<span class="small">☸</span>
+			<span class="large">☸</span>
+			<span class="medium">☸</span>
+		</h1>
+		<form name="config">
+			<fieldset>
+				<legend>Konfigurace</legend>
+				<label>☸ 1:
+					<select name="size1">
+						<option class="small">20</option>
+						<option class="medium">30</option>
+						<option class="large">40</option>
+					</select>
+				</label>
+				&rArr;
+				<label>☸ 2:
+					<select name="size2">
+						<option class="small">20</option>
+						<option class="medium">30</option>
+						<option class="large">40</option>
+					</select>
+				</label>
+				<br/>
+				<label>Abeceda:
+					<select name="alphabet">
+						<option value="23">23 (bez nečeských)</option>
+						<option value="24">24 (+Q)</option>
+						<option value="25" selected>25 (+QX)</option>
+					</select>
+				</label>
+				<label>
+					<input type="checkbox" name="negative-only" />
+					Jen po směru ručiček?
+				</label>
+			</fieldset>
+		</form>
+
+		<nav>
+			<ul>
+				<li><a href="#check-word">Kódování slova</a></li>
+				<li><a href="#initial-values">Počáteční písmena</a></li>
+				<li><a href="#wordlist">Wordlist</a></li>
+			</ul>
+		</nav>
+
+		<form name="check-word" id="check-word">
+			<fieldset>
+				<legend>Kódování slova</legend>
+				<label>Slovo: <input type="text" name="word" /></label>
+				<br/>
+				<label>Druhé kolo začíná na: <input type="text" name="value2" value="a" /></label>
+				<button>Spočítat</button>
+				<output></output>
+			</fieldset>
+		</form>
+
+		<form name="initial-values" id="initial-values">
+			<fieldset>
+				<legend>Počáteční písmena na druhém kole</legend>
+				<label>Slovo: <input type="text" name="word" /></label>
+				<button>Spočítat</button>
+				<output></output>
+			</fieldset>
+		</form>
+
+		<form name="wordlist" id="wordlist">
+			<fieldset>
+				<legend>Analýza wordlistu</legend>
+				<label>Wordlist: <input type="file" name="file" /></label>
+				<button>Zkontrolovat</button>
+				<output></output>
+			</fieldset>
+		</form>
+<!--
+	pro konfiguraci kol overit wordlist DONE
+	pro konfiguraci kol a slovo vypsat pocatky DONE
+	pro konfiguraci kol a pocatek overit slovo, resp. vypsat jeho kroky
+-->
+
+		<script src="index.js"></script>
+	</body>
+</html>
