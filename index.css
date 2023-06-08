@@ -1,5 +1,8 @@
 * {
 	box-sizing: border-box;
+}
+
+body {
 	font-family: sans-serif;
 }
 
@@ -24,8 +27,7 @@ output:not(:empty) {
 
 form[id]:not(:target) { display: none; }
 
-nav ul {
-	list-style: none;
+nav ol {
 	display: flex;
 	gap: 2em;
 }
