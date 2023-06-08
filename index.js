@@ -1,5 +1,5 @@
 (() => {
-  // lib.ts
+  // ts/lib.ts
   var alphabets = {
     23: "abcdefghijklmnoprstuvyz",
     24: "abcdefghijklmnopqrstuvyz",
@@ -100,7 +100,7 @@
     alphabet: alphabets[25]
   };
 
-  // index.ts
+  // ts/index.ts
   function byName(name, parent = document.body) {
     return parent.querySelector(`[name=${name}]`);
   }

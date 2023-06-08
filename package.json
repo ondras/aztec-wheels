@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "esbuild --bundle index.ts --outfile=index.js"
+    "build": "esbuild --bundle ts/index.ts --outfile=index.js"
   },
   "devDependencies": {
     "esbuild": "^0.17.19"
