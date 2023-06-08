@@ -10,18 +10,14 @@ const countToSize = {
 
 function byName<T extends HTMLElement = HTMLElement>(name: string, parent=document.body) { return parent.querySelector<T>(`[name=${name}]`)!; }
 
-byName("wordlist").addEventListener("submit", async e => {
-	e.preventDefault();
-	let form = e.target as HTMLElement;
+async function loadWordlist(url: string) {
+	let form = byName("wordlist");
 	let output = form.querySelector("output")!;
-
 	output.innerHTML = "";
 
-	let files = byName<HTMLInputElement>("file", form).files;
-	if (!files || !files.length) { return alert("Vyber soubor"); }
-
-	let data = await readFile(files[0]);
-	let words = data.split("\n").map(line => {
+	let response = await fetch(url);
+	let text = await response.text();
+	let words = text.split("\n").map(line => {
 		return line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 	}).filter(w => w);
 
@@ -33,7 +29,22 @@ byName("wordlist").addEventListener("submit", async e => {
 	} catch (e) {
 		output.innerHTML = e;
 	}
+}
+
+byName("wordlist").addEventListener("submit", async e => {
+	e.preventDefault();
+	let form = e.target as HTMLElement;
+	let url = byName<HTMLInputElement>("url", form).value;
+	if (!url) { return alert("Zadej URL"); }
+	loadWordlist(url);
 });
+
+byName("wordlist").querySelector("[type=file]")!.addEventListener("change", e => {
+	let files = (e.target as HTMLInputElement).files!;
+	if (files.length == 0) { return; }
+	let url = URL.createObjectURL(files[0]);
+	loadWordlist(url);
+})
 
 byName("initial-values").addEventListener("submit", async e => {
 	e.preventDefault();

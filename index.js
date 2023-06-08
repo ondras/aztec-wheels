@@ -110,17 +110,13 @@
   function byName(name, parent = document.body) {
     return parent.querySelector(`[name=${name}]`);
   }
-  byName("wordlist").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    let form = e.target;
+  async function loadWordlist(url) {
+    let form = byName("wordlist");
     let output = form.querySelector("output");
     output.innerHTML = "";
-    let files = byName("file", form).files;
-    if (!files || !files.length) {
-      return alert("Vyber soubor");
-    }
-    let data = await readFile(files[0]);
-    let words = data.split("\n").map((line) => {
+    let response = await fetch(url);
+    let text = await response.text();
+    let words = text.split("\n").map((line) => {
       return line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }).filter((w) => w);
     let config2 = createConfig();
@@ -128,9 +124,26 @@
       let result = countDoableWords(words, config2);
       output.innerHTML = `OK: ${result.ok.length}, KO: ${result.ko.length}<br><br>`;
       output.innerHTML += `OK:<br>${result.ok.map((w) => "&nbsp;&nbsp;" + w).join("<br>")}`;
-    } catch (e2) {
-      output.innerHTML = e2;
+    } catch (e) {
+      output.innerHTML = e;
     }
+  }
+  byName("wordlist").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let form = e.target;
+    let url = byName("url", form).value;
+    if (!url) {
+      return alert("Zadej URL");
+    }
+    loadWordlist(url);
+  });
+  byName("wordlist").querySelector("[type=file]").addEventListener("change", (e) => {
+    let files = e.target.files;
+    if (files.length == 0) {
+      return;
+    }
+    let url = URL.createObjectURL(files[0]);
+    loadWordlist(url);
   });
   byName("initial-values").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -186,13 +199,6 @@
       alphabet: alphabets[a],
       negativeOnly: byName("negative-only").checked
     };
-  }
-  async function readFile(file) {
-    let fr = new FileReader();
-    fr.readAsText(file);
-    return new Promise((resolve) => {
-      fr.addEventListener("load", (e) => resolve(fr.result));
-    });
   }
   function serializeMoves(moves, initialState, config2) {
     let html = "";

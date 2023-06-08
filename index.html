@@ -47,9 +47,9 @@
 
 		<nav>
 			<ul>
-				<li><a href="#check-word">Kódování slova</a></li>
-				<li><a href="#initial-values">Počáteční písmena</a></li>
 				<li><a href="#wordlist">Wordlist</a></li>
+				<li><a href="#initial-values">Počáteční písmena</a></li>
+				<li><a href="#check-word">Kódování slova</a></li>
 			</ul>
 		</nav>
 
@@ -77,8 +77,9 @@
 		<form name="wordlist" id="wordlist">
 			<fieldset>
 				<legend>Analýza wordlistu</legend>
-				<label>Wordlist: <input type="file" name="file" /></label>
-				<button>Zkontrolovat</button>
+				<label>Místní soubor: <input type="file" name="file" /></label>
+				<br/>
+				<label>URL: <input type="text" name="url" value="data/zvirata.txt" /><button>Načíst</button></label>
 				<output></output>
 			</fieldset>
 		</form>
