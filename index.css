@@ -51,6 +51,7 @@ h1 {
 h1 span {
 	color: var(--color);
 	font-size: calc(var(--size) * 20px);
+	line-height: 0.8;
 
 	--duration: calc(2s * var(--size));
 	--direction: 1;
