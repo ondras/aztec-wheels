@@ -112,9 +112,9 @@
     40: "large"
   };
   var countToColor = {
-    20: "red",
-    30: "green",
-    40: "#aa0"
+    20: "#f33",
+    30: "#3a3",
+    40: "#bb0"
   };
   document.body.style.setProperty("--color-small", countToColor[20]);
   document.body.style.setProperty("--color-medium", countToColor[30]);
@@ -243,7 +243,7 @@
     html += `<td style="${cellStyle(config2.size2)}">${letter(initialState.value2)}</td>`;
     html += `</tr></table>`;
     html += `<br/>`;
-    html += `<table style="text-align: center; font-size: 20px; font-family: monospace;">`;
+    html += `<table style="line-height: 1; text-align: center; font-size: 20px; font-family: monospace;">`;
     html += `<tr>` + moves.map((move) => `<td>${move ? move.offset1 > 0 ? "\u2939" : "\u2938" : "&#160;"}</td>`).join("") + `</tr>`;
     html += `<tr>` + moves.map((move) => `<td>${move ? letter(move.state.value1) : "&#160;"}</td>`).join("") + `</tr>`;
     html += `</table>`;
