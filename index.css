@@ -12,18 +12,17 @@ form {
 
 output {
 	display: block;
-	background-color: #eee;
-	text-transform: uppercase;
+	margin: 0.5em;
 }
 
-output:not(:empty) {
-	padding: 0.5em;
+output:empty {
+	display: none;
 }
 
 .none { --color: #000; --size: 1; }
-.small { --color: red; --size: 2; }
-.medium { --color: green; --size: 3; }
-.large { --color: #aa0; --size: 4; }
+.small { --color: var(--color-small); --size: 2; }
+.medium { --color: var(--color-medium); --size: 3; }
+.large { --color: var(--color-large); --size: 4; }
 
 form[id]:not(:target) { display: none; }
 
@@ -32,15 +31,8 @@ nav ol {
 	gap: 2em;
 }
 
-option, output span.wheel {
+option {
 	background-color: var(--color, transparent);
-}
-
-output span.wheel {
-	display: inline-block;
-	border: 1px solid black;
-	padding: 1px 4px;
-	margin: 0 2px;
 }
 
 h1 {
@@ -107,4 +99,23 @@ h1 span:nth-child(even) {
 	font-weight: bold;
 	--dist: calc(var(--size) * -30px);
 	transform: translate(-50%, -60%) rotate(calc(1deg * var(--angle))) translate(0, var(--dist));
+}
+
+#print:empty::before {
+	content: "Nic tu není, nejdřív sestav kódování slova a přidej ho k tisku";
+	color: red;
+}
+
+#print .row {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 3em 0;
+	border-bottom: 1px dotted #eee;
+}
+
+#print .row:not(:hover) button { display: none; }
+
+@media print {
+	h1, [name=config], nav { display: none; }
 }

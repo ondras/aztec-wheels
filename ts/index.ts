@@ -8,6 +8,18 @@ const countToSize = {
 	40: "large"
 }
 
+const countToColor = {
+	20: "red",
+	30: "green",
+	40: "#aa0"
+}
+
+document.body.style.setProperty("--color-small", countToColor[20]);
+document.body.style.setProperty("--color-medium", countToColor[30]);
+document.body.style.setProperty("--color-large", countToColor[40]);
+
+let printQueue: string[] = [];
+
 function byName<T extends HTMLElement = HTMLElement>(name: string, parent=document.body) { return parent.querySelector<T>(`[name=${name}]`)!; }
 
 async function loadWordlist(url: string) {
@@ -84,7 +96,16 @@ byName("check-word").addEventListener("submit", async e => {
 	try {
 		let result = lib.checkWord(word, state, config);
 		if (result) {
-			output.innerHTML = serializeMoves(result, state, config);
+			let html = serializeMoves(result, state, config);
+			output.innerHTML = html + "<br>";
+			let print = document.createElement("button");
+			print.textContent = "🖶";
+			print.title = "Přidat k tisku";
+			print.addEventListener("click", _ => {
+				printQueue.push(html);
+				drawPrint();
+			});
+			output.append(print, document.createElement("hr"));
 			initWheels(wheels, config, state.value2);
 		} else {
 			output.innerHTML = "🖕";
@@ -104,21 +125,33 @@ function createConfig() {
 	}
 }
 
-async function readFile(file: File): Promise<string> {
-	let fr = new FileReader();
-	fr.readAsText(file);
-	return new Promise(resolve => {
-		fr.addEventListener("load", e => resolve(fr.result as string));
-	})
-}
+function serializeMoves(moves: (lib.Move | null)[], initialState: lib.State, config: lib.Config) {
+	function cellStyle(count: number) {
+		return `width: 40px; height: 40px; border: 2px solid black; background-color: ${countToColor[count]};`;
+	}
 
-function serializeMoves(moves: lib.Move[], initialState: lib.State, config: lib.Config) {
-	let html = "";
+	function letter(index) {
+		return config.alphabet[index].toUpperCase();
+	}
 
-	html += `<span class="wheel ${countToSize[config.size1]}">${config.alphabet[initialState.value1]}</span>`
-	html += `<span class="wheel ${countToSize[config.size2]}">${config.alphabet[initialState.value2]}</span>`
-	html += `<br/><br/>`
-	html += moves.map(move => serializeMove(move, config)).join("<br>");
+	let midSize = 20;
+	if (config.size1 == midSize || config.size2 == midSize) { midSize = 30; }
+	if (config.size1 == midSize || config.size2 == midSize) { midSize = 40; }
+
+	let html = ``;
+
+	html += `<table style="border-collapse:collapse; text-align: center; font-weight: bold; font-size: 20px; font-family: monospace;"><tr>`;
+	html += `<td style="${cellStyle(config.size1)}">${letter(initialState.value1)}</td>`
+	html += `<td style="${cellStyle(midSize)}"></td>`
+	html += `<td style="${cellStyle(config.size2)}">${letter(initialState.value2)}</td>`
+	html += `</tr></table>`;
+
+	html += `<br/>`;
+
+	html += `<table style="text-align: center; font-size: 20px; font-family: monospace;">`
+	html += `<tr>` + moves.map(move => `<td>${move ? (move.offset1 > 0 ? "⤹" : "⤸") : "&#160;"}</td>`).join("") + `</tr>`;
+	html += `<tr>` + moves.map(move => `<td>${move ? letter(move.state.value1) : "&#160;"}</td>`).join("") + `</tr>`;
+	html += `</table>`
 
 	return html;
 }
@@ -183,4 +216,27 @@ function buildWheel(size: number, alphabet: string) {
 	node.append(...letters)
 
 	return node;
+}
+
+function drawPrint() {
+	let node = document.querySelector("#print")!;
+	node.innerHTML = "";
+
+	printQueue.forEach((html, i) => {
+		let div = document.createElement("div");
+		div.className = "row";
+		node.append(div);
+
+		let remove = document.createElement("button");
+		remove.textContent = "⨯";
+		remove.addEventListener("click", _ => {
+			printQueue.splice(i, 1);
+			drawPrint();
+		})
+
+		let content = document.createElement("div");
+		content.innerHTML = html;
+
+		div.append(content, remove);
+	});
 }

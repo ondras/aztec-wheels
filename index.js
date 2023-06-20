@@ -50,6 +50,10 @@
     let letters = word.split("");
     while (letters.length) {
       let letter = letters.shift();
+      if (letter == " ") {
+        wordMoves.push(null);
+        continue;
+      }
       let value2 = config2.alphabet.split("").indexOf(letter);
       if (value2 == -1) {
         throw new Error(`Letter ${letter} not in alphabet`);
@@ -107,6 +111,15 @@
     30: "medium",
     40: "large"
   };
+  var countToColor = {
+    20: "red",
+    30: "green",
+    40: "#aa0"
+  };
+  document.body.style.setProperty("--color-small", countToColor[20]);
+  document.body.style.setProperty("--color-medium", countToColor[30]);
+  document.body.style.setProperty("--color-large", countToColor[40]);
+  var printQueue = [];
   function byName(name, parent = document.body) {
     return parent.querySelector(`[name=${name}]`);
   }
@@ -182,7 +195,16 @@
     try {
       let result = checkWord(word, state, config2);
       if (result) {
-        output.innerHTML = serializeMoves(result, state, config2);
+        let html = serializeMoves(result, state, config2);
+        output.innerHTML = html + "<br>";
+        let print = document.createElement("button");
+        print.textContent = "\u{1F5B6}";
+        print.title = "P\u0159idat k tisku";
+        print.addEventListener("click", (_) => {
+          printQueue.push(html);
+          drawPrint();
+        });
+        output.append(print, document.createElement("hr"));
         initWheels(wheels, config2, state.value2);
       } else {
         output.innerHTML = "\u{1F595}";
@@ -201,17 +223,31 @@
     };
   }
   function serializeMoves(moves, initialState, config2) {
-    let html = "";
-    html += `<span class="wheel ${countToSize[config2.size1]}">${config2.alphabet[initialState.value1]}</span>`;
-    html += `<span class="wheel ${countToSize[config2.size2]}">${config2.alphabet[initialState.value2]}</span>`;
-    html += `<br/><br/>`;
-    html += moves.map((move) => serializeMove(move, config2)).join("<br>");
+    function cellStyle(count) {
+      return `width: 40px; height: 40px; border: 2px solid black; background-color: ${countToColor[count]};`;
+    }
+    function letter(index) {
+      return config2.alphabet[index].toUpperCase();
+    }
+    let midSize = 20;
+    if (config2.size1 == midSize || config2.size2 == midSize) {
+      midSize = 30;
+    }
+    if (config2.size1 == midSize || config2.size2 == midSize) {
+      midSize = 40;
+    }
+    let html = ``;
+    html += `<table style="border-collapse:collapse; text-align: center; font-weight: bold; font-size: 20px; font-family: monospace;"><tr>`;
+    html += `<td style="${cellStyle(config2.size1)}">${letter(initialState.value1)}</td>`;
+    html += `<td style="${cellStyle(midSize)}"></td>`;
+    html += `<td style="${cellStyle(config2.size2)}">${letter(initialState.value2)}</td>`;
+    html += `</tr></table>`;
+    html += `<br/>`;
+    html += `<table style="text-align: center; font-size: 20px; font-family: monospace;">`;
+    html += `<tr>` + moves.map((move) => `<td>${move ? move.offset1 > 0 ? "\u2939" : "\u2938" : "&#160;"}</td>`).join("") + `</tr>`;
+    html += `<tr>` + moves.map((move) => `<td>${move ? letter(move.state.value1) : "&#160;"}</td>`).join("") + `</tr>`;
+    html += `</table>`;
     return html;
-  }
-  function serializeMove(move, config2) {
-    let symbol = move.offset1 > 0 ? "\u2939" : "\u2938";
-    let letter = config2.alphabet[move.state.value1];
-    return `${symbol} ${letter}`;
   }
   function initWheels(parent, config2, value2) {
     let wheel1 = buildWheel(config2.size1, config2.alphabet);
@@ -257,5 +293,23 @@
     });
     node.append(...letters);
     return node;
+  }
+  function drawPrint() {
+    let node = document.querySelector("#print");
+    node.innerHTML = "";
+    printQueue.forEach((html, i) => {
+      let div = document.createElement("div");
+      div.className = "row";
+      node.append(div);
+      let remove = document.createElement("button");
+      remove.textContent = "\u2A2F";
+      remove.addEventListener("click", (_) => {
+        printQueue.splice(i, 1);
+        drawPrint();
+      });
+      let content = document.createElement("div");
+      content.innerHTML = html;
+      div.append(content, remove);
+    });
   }
 })();

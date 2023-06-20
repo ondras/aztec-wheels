@@ -71,11 +71,16 @@ function listMoves(state: State, config: Config) {
 }
 
 export function checkWord(word: string, state: State, config: Config) {
-	let wordMoves: Move[] = [];
+	let wordMoves: (Move | null)[] = [];
 
 	let letters = word.split("");
 	while (letters.length) {
 		let letter = letters.shift()!;
+		if (letter == " ") {
+			wordMoves.push(null);
+			continue;
+		}
+
 		let value2 = config.alphabet.split("").indexOf(letter);
 		if (value2 == -1) { throw new Error(`Letter ${letter} not in alphabet`); }
 		let moves = listMoves(state, config);
